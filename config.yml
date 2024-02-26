@@ -1,0 +1,16 @@
+logins_file: "logins.csv"
+keywords_file: "keywords.txt"
+succ_logins_file: "succ-logins.csv"
+log_file: "login_script.log"
+log_level: "INFO"
+login_url: "https://home.bt.com/login/loginform"
+logout_url: "https://home.bt.com/logout"  # New parameter
+folders_to_check:
+  - "inbox"
+  - "trash"
+  - "sent"
+sleep_duration: 5  # New parameter
+additional_settings:
+  setting_name: "value"
+  another_setting: 42
+csrf_token_input_name: "csrfToken"  # New parameter
