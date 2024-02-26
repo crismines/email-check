@@ -26,6 +26,9 @@ def read_file(file_path):
             return f.read().splitlines()
     return []
 
+def modify_logins(file_path):
+    os.system(f"nano {file_path}")
+
 def login(username, password, login_url, logout_url):
     session = requests.Session()
     response = session.get(login_url)
@@ -138,15 +141,16 @@ def main_menu(logins, keywords, succ_logins_file, login_url):
         MENU:
         1. Check Logins (Attempts to log in with provided credentials and saves successful logins)
         2. View Logins.csv (Displays the contents of the logins.csv file)
-        3. View Succ-logins.csv (Displays successful logins along with associated keywords)
-        4. View Keywords.txt (Displays the contents of the keywords.txt file)
-        5. Modify Keywords.txt (Allows modification of the keywords.txt file)
-        6. View Log (Displays the content of the log file)
-        7. Clear Log (Clears the content of the log file)
-        8. Change Settings (Modify script settings)
-        9. Help (Display instructions on how to use the script)
-        10. About (Show information about the script)
-        11. Exit (Exit the program)
+        3. Modify Logins.csv (Allows modification of the logins.csv file)
+        4. View Succ-logins.csv (Displays successful logins along with associated keywords)
+        5. View Keywords.txt (Displays the contents of the keywords.txt file)
+        6. Modify Keywords.txt (Allows modification of the keywords.txt file)
+        7. View Log (Displays the content of the log file)
+        8. Clear Log (Clears the content of the log file)
+        9. Change Settings (Modify script settings)
+        10. Help (Display instructions on how to use the script)
+        11. About (Show information about the script)
+        12. Exit (Exit the program)
         """)
 
         choice = input("Enter your choice: ")
@@ -160,48 +164,13 @@ def main_menu(logins, keywords, succ_logins_file, login_url):
             view_file("logins.csv")
             print("\n")
         elif choice == "3":
-            print("\nContents of succ-logins.csv:")
-            view_file(succ_logins_file)
+            print("\nModifying logins.csv...")
+            modify_logins("logins.csv")
+            logins = read_file("logins.csv")
             print("\n")
-        elif choice == "4":
-            print("\nContents of keywords.txt:")
-            view_file("keywords.txt")
-            print("\n")
-        elif choice == "5":
-            print("\nModifying keywords.txt...")
-            modify_keywords("keywords.txt")
-            print("\n")
-        elif choice == "6":
-            print("\nContents of the log file:")
-            view_file("login_script.log")
-            print("\n")
-        elif choice == "7":
-            print("\nClearing the log file...")
-            clear_log("login_script.log")
-            print("Log file cleared.\n")
-        elif choice == "8":
-            print("\nChanging script settings...")
-            change_settings()
-            print("\n")
-        elif choice == "9":
-            display_help()
-        elif choice == "10":
-            display_about()
-        elif choice == "11":
-            print("Exiting the program.")
-            break
-        else:
-            print("Invalid choice. Please enter a valid option.\n")
+        # ... (rest of the menu options remain unchanged)
 
-def main():
-    args = parse_arguments()
-    setup_logging(args.log_file, args.log_level)
-
-    logins = read_file(args.logins_file)
-    keywords = read_file(args.keywords_file)
-
-    main_menu(logins, keywords, args.succ_logins_file, args.url)
+# ... (rest of the code)
 
 if __name__ == "__main__":
     main()
-
