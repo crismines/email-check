@@ -26,6 +26,15 @@ def read_file(file_path):
             return f.read().splitlines()
     return []
 
+def read_logins(file_path):
+    logins = []
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            for line in f:
+                email, password = line.strip().split(',')
+                logins.append({"email": email, "password": password})
+    return logins
+
 def modify_logins(file_path):
     os.system(f"nano {file_path}")
 
@@ -68,21 +77,20 @@ def add_succ_login_to_csv(username, password, keywords, succ_logins_file):
 def check_logins(logins, keywords, login_url, logout_url, succ_logins_file):
     total_logins = len(logins)
     successful_logins = 0
-    for i, login in enumerate(logins, start=1):
-        session = login(login["email"], login["password"], login_url, login_url)  # Use login_url for both login and logout
-        if session:
-            try:
+    for i, login_info in enumerate(logins, start=1):
+        try:
+            session = login(login_info["email"], login_info["password"], login_url, logout_url)
+            if session:
                 if check_keywords(session, keywords):
-                    add_succ_login_to_csv(login["email"], login["password"], keywords, succ_logins_file)
-                    logging.info(f"Successful login: {login['email']}")
+                    add_succ_login_to_csv(login_info["email"], login_info["password"], keywords, succ_logins_file)
+                    logging.info(f"Successful login: {login_info['email']}")
                     successful_logins += 1
-            except Exception as e:
-                logging.error(f"Error with login {login['email']}: {e}")
-            finally:
-                logout(session, login_url)  # Use login_url for logout since it's the same URL
+                logout(session, logout_url)
                 time.sleep(5)
-        else:
-            logging.error(f"Login failed: {login['email']}")
+            else:
+                logging.error(f"Login failed: {login_info['email']}")
+        except Exception as e:
+            logging.error(f"Error with login {login_info['email']}: {e}")
 
         # Display progress
         print(f"Checked {i}/{total_logins} logins. Found {successful_logins} successful logins.", end="\r")
@@ -166,7 +174,7 @@ def main_menu(logins, keywords, succ_logins_file, login_url):
         elif choice == "3":
             print("\nModifying logins.csv...")
             modify_logins("logins.csv")
-            logins = read_file("logins.csv")
+            logins = read_logins("logins.csv")
             print("\n")
         elif choice == "4":
             print("\nContents of succ-logins.csv:")
@@ -206,7 +214,7 @@ if __name__ == "__main__":
     args = parse_arguments()
     setup_logging(args.log_file, args.log_level)
 
-    logins = read_file(args.logins_file)
+    logins = read_logins(args.logins_file)
     keywords = read_file(args.keywords_file)
 
     main_menu(logins, keywords, args.succ_logins_file, args.url)
