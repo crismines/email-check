@@ -1,0 +1,26 @@
+# .gitignore
+
+# Python-related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Editor/IDE files
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Compiled files
+*.pyc
+
+# Configuration files
+*.yml
+
+# Output files
+succ-logins.csv
