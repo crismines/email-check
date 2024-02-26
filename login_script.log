@@ -1,0 +1,3 @@
+logging.info(f"Successful login: {username}")
+logging.error(f"Error with login {username}: {e}")
+logging.error(f"Login failed: {username}")
