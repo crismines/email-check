@@ -123,11 +123,11 @@ def display_help():
 
     Here's how to use the script:
 
-    1. Populate logins.csv: Add email addresses and passwords in logins.csv file.
-    2. Add keywords: Add keywords you want to check for in the keywords.txt file.
-    3. Run the script: Execute the script to start checking logins.
-    4. Use the menu options to perform various actions such as viewing log files, modifying keywords, etc.
-    5. Review logs: Check the login_script.log file for any errors or debug messages.
+     1. Populate logins.csv: Add email addresses and passwords in logins.csv file.
+     2. Add keywords: Add keywords you want to check for in the keywords.txt file.
+     3. Run the script: Execute the script to start checking logins.
+     4. Use the menu options to perform various actions such as viewing log files, modifying keywords, etc.
+     5. Review logs: Check the login_script.log file for any errors or debug messages.
 
     For more information or assistance, feel free to consult the documentation or contact the author.
 
@@ -168,9 +168,45 @@ def main_menu(logins, keywords, succ_logins_file, login_url):
             modify_logins("logins.csv")
             logins = read_file("logins.csv")
             print("\n")
-        # ... (rest of the menu options remain unchanged)
-
-# ... (rest of the code)
+        elif choice == "4":
+            print("\nContents of succ-logins.csv:")
+            view_file(succ_logins_file)
+            print("\n")
+        elif choice == "5":
+            print("\nContents of keywords.txt:")
+            view_file("keywords.txt")
+            print("\n")
+        elif choice == "6":
+            print("\nModifying keywords.txt...")
+            modify_keywords("keywords.txt")
+            print("\n")
+        elif choice == "7":
+            print("\nContents of the log file:")
+            view_file("login_script.log")
+            print("\n")
+        elif choice == "8":
+            print("\nClearing the log file...")
+            clear_log("login_script.log")
+            print("Log file cleared.\n")
+        elif choice == "9":
+            print("\nChanging script settings...")
+            change_settings()
+            print("\n")
+        elif choice == "10":
+            display_help()
+        elif choice == "11":
+            display_about()
+        elif choice == "12":
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please enter a valid option.\n")
 
 if __name__ == "__main__":
-    main()
+    args = parse_arguments()
+    setup_logging(args.log_file, args.log_level)
+
+    logins = read_file(args.logins_file)
+    keywords = read_file(args.keywords_file)
+
+    main_menu(logins, keywords, args.succ_logins_file, args.url)
